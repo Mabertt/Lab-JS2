@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>JS Tasks</title>
+
+<style>
+/* Завдання 5 */
+#elid {
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+    position: relative;
+    left: 0;
+    transition: left 0.3s;
+}
+</style>
+
+<!-- Завдання 1 -->
+<script src="big.js"></script>
+<script src="small.js"></script>
+
+</head>
+<body>
+
+<!-- Завдання 3 -->
+<input id="countyInput" placeholder="Введіть округ">
+<button id="findBtn">Знайти код</button>
+
+<!-- Завдання 4 -->
+<form id="form">
+    <input id="first_name" placeholder="First name"><br>
+    <input id="last_name" placeholder="Last name"><br>
+    <input id="email" placeholder="Email"><br>
+    <button type="submit">Submit</button>
+</form>
+
+<!-- Завдання 5 -->
+<div id="elid"></div>
+<br>
+<button id="leftBtn">Вліво</button>
+<button id="rightBtn">Вправо</button>
+
+<script>
+
+// Завдання 1
+
+// small.js виконається другим, навіть якщо завантажиться швидше,
+// тому що <script> без async/defer виконуються послідовно зверху вниз.
+
+// Завдання 2
+
+// a *= 2 => a = 4, тому x = 1 + 4 = 5
+var a = 2;
+var x = 1 + (a *= 2);
+console.log("x =", x);
+
+// alert З'ЯВИТЬСЯ, тому що "0" є непорожнім рядком (truthy)
+if ("0") {
+    alert('Привіт');
+}
+
+var admin;
+var name = "Василь";
+admin = name;
+console.log(admin);
+
+// Завдання 3
+
+async function getData() {
+    const res = await fetch("https://api.census.gov/data/2020/acs/acs5/profile?get=NAME&for=county:*");
+    const data = await res.json();
+
+    return data.slice(1).map(row => ({
+        name: row[0],
+        state: row[1],
+        county: row[2],
+        code: row[1] + row[2]
+    }));
+}
+
+async function getCountyCode(name) {
+    const data = await getData();
+    const found = data.find(c => c.name === name);
+    return found ? found.code : "Не знайдено";
+}
+
+document.getElementById("findBtn").addEventListener("click", async () => {
+    const input = document.getElementById("countyInput").value;
+    const code = await getCountyCode(input);
+    console.log(code);
+});
+
+// Завдання 4
+
+document.getElementById("form").addEventListener("submit", function(e) {
+    const first = document.getElementById("first_name").value;
+    const last = document.getElementById("last_name").value;
+    const email = document.getElementById("email").value;
+
+    if (!first || !last || !email) {
+        alert("Заповніть всі поля!");
+        e.preventDefault();
+    } else {
+        alert(first + " " + last + ", " + email);
+    }
+});
+
+// Завдання 5
+
+let pos = 0;
+
+document.getElementById("leftBtn").addEventListener("click", () => {
+    pos -= 100;
+    document.getElementById("elid").style.left = pos + "px";
+});
+
+document.getElementById("rightBtn").addEventListener("click", () => {
+    pos += 100;
+    document.getElementById("elid").style.left = pos + "px";
+});
+
+</script>
+
+</body>
+</html>
